@@ -11,7 +11,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 # The path to output all built .py files to: 
-UI_PYTHON_PATH=../python/tk_multi_breakdown/ui
+UI_PYTHON_PATH=../python/tk_mari_projectmanagement/ui
 
 
 # Helper functions to build UI files
@@ -36,10 +36,9 @@ function build_res {
 
 # build UI's:
 echo "building user interfaces..."
-#build_ui dialog
-#build_ui item
+build_ui new_project_form
 
 # build resources
 echo "building resources..."
-#build_res resources
+build_res resources
 
