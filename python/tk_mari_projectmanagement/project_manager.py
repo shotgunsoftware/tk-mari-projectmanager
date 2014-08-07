@@ -71,11 +71,16 @@ class ProjectManager(object):
         for sg_publish in sg_publish_data:
             path = sg_publish.get("path", {}).get("local_path")
             if not path or not os.path.exists(path):
-                self._app.log_warning("Publish '%s' couldn't be found on disk, skipping!")
+                self._app.log_warning("Publish '%s' couldn't be found on disk, skipping!" % path)
             publishes_to_load.append(PublishedGeomDetails(path, sg_publish))
         
+        using_placeholder = False
         if not publishes_to_load:
-            raise TankError("Must select at least one valid geometry publish in order to create a new project!")
+            #raise TankError("Must select at least one valid geometry publish in order to create a new project!")
+            # use placeholder geom instead:
+            placeholder_alembic = os.path.join(os.path.dirname(__file__), "..", "..", "resources", "placeholder.abc")
+            publishes_to_load.append(PublishedGeomDetails(placeholder_alembic, None))
+            using_placeholder = True
         
         # close existing project if it's open:
         if mari.projects.current():
@@ -110,6 +115,9 @@ class ProjectManager(object):
         
         # add metadata to the project so that we can track the context:
         self.set_project_metadata(new_project, self._app.context)        
+        
+        if using_placeholder:
+            return new_project
         
         # update the metadata, name and version on the loaded geometry:
         for geo in mari.geo.list():
@@ -147,17 +155,17 @@ class ProjectManager(object):
             sg_publish_data = []
             
             # (AD) - TEMP!!
-            if not sg_publish_data:
-                sg_publish_data.append({'version_number': 16,
-                                        'task': {'type': 'Task', 'id': 230, 'name': 'Animation'},
-                                        'entity': {'type': 'Shot', 'id': 914, 'name': '123'},
-                                        'project': {'type': 'Project', 'id': 67, 'name': 'Another Demo Project'},
-                                        'id': 1814, 
-                                        'path': {'local_path': '/tank_testbed/another_demo_project/sequences/Sequence-01/123/Anm/publish/caches/scene.v016.abc'}, 
-                                        'name': 'scene'})
+            #if not sg_publish_data:
+            #    sg_publish_data.append({'version_number': 16,
+            #                            'task': {'type': 'Task', 'id': 230, 'name': 'Animation'},
+            #                            'entity': {'type': 'Shot', 'id': 914, 'name': '123'},
+            #                            'project': {'type': 'Project', 'id': 67, 'name': 'Another Demo Project'},
+            #                            'id': 1814, 
+            #                            'path': {'local_path': '/tank_testbed/another_demo_project/sequences/Sequence-01/123/Anm/publish/caches/scene.v016.abc'}, 
+            #                            'name': 'scene'})
             
             if self.create_new_project(name, sg_publish_data):
-                return True
+                new_project_form.close()
         except TankError, e:
             QtGui.QMessageBox.information(new_project_form, "Failed to create new project!", "%s" % e)
         except Exception, e:
