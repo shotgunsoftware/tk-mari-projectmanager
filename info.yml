@@ -12,6 +12,11 @@
 
 # expected fields in the configuration file for this app
 configuration:
+    template_new_project_name:
+        type: template
+        fields: context, [name]
+        description: A template used to construct the name for a new Mari project
+
 
 # the Shotgun fields that this app needs in order to operate correctly
 requires_shotgun_fields:

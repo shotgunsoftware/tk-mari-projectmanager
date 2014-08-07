@@ -27,7 +27,7 @@ class MariProjectManagement(Application):
         self.log_debug("%s: Initializing..." % self)
     
         # register the start new project command:
-        self.engine.register_command("New Project...", self.start_new_project_ui)
+        self.engine.register_command("Start New Project...", self.start_new_project_ui)
 
     def destroy_app(self):
         """
@@ -40,7 +40,13 @@ class MariProjectManagement(Application):
         Show the start new project UI
         """
         tk_mari_projectmanagement = self.import_module("tk_mari_projectmanagement")
-        tk_mari_projectmanagement.ProjectManager.start_new_project_ui()
+        project_mngr = tk_mari_projectmanagement.ProjectManager(self)
+        project_mngr.show_new_project_dialog()
 
-
+    def create_new_project(self, tk_name, geometry_publishes):
+        """
+        """
+        tk_mari_projectmanagement = self.import_module("tk_mari_projectmanagement")
+        project_mngr = tk_mari_projectmanagement.ProjectManager(self)
+        return project_mngr.create_new_project(tk_name, geometry_publishes)
 

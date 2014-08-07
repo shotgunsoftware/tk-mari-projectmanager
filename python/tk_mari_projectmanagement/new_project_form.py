@@ -15,17 +15,17 @@ UI for creating a new project
 import sgtk
 from sgtk.platform.qt import QtGui, QtCore
 
-class NewProjectForm(QWidget):
+class NewProjectForm(QtGui.QWidget):
     """
     """
     
     # define signals that this form exposes:
-    create_project = QtCore.QSignal(QtGui.QWidget)
+    create_project = QtCore.Signal(QtGui.QWidget)
     
-    def __init__(self, parent=None):
+    def __init__(self, init_proc, parent=None):
         """
         """
-        QWidget.__init__(self, parent)
+        QtGui.QWidget.__init__(self, parent)
         
         # set up the UI
         from .ui.new_project_form import Ui_NewProjectForm
@@ -33,6 +33,8 @@ class NewProjectForm(QWidget):
         self.__ui.setupUi(self)
         
         self.__ui.create_btn.clicked.connect(self._on_create_clicked)
+        
+        init_proc(self)
         
     @property
     def project_name(self):
@@ -43,6 +45,6 @@ class NewProjectForm(QWidget):
     def _on_create_clicked(self):
         """
         """
-        create_project.emit(self)
+        self.create_project.emit(self)
         
     
