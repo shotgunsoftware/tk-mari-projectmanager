@@ -23,7 +23,7 @@ class NewProjectForm(QtGui.QWidget):
     create_project = QtCore.Signal(QtGui.QWidget)
     browse_publishes = QtCore.Signal(QtGui.QWidget)
     
-    def __init__(self, init_proc, parent=None):
+    def __init__(self, app, init_proc, parent=None):
         """
         """
         QtGui.QWidget.__init__(self, parent)
@@ -36,6 +36,13 @@ class NewProjectForm(QtGui.QWidget):
         self.__ui.create_btn.clicked.connect(self._on_create_clicked)
         self.__ui.add_publish_btn.clicked.connect(self._on_add_publish_clicked)
         
+        self.__ui.publish_list.set_app(app)
+        
+        # temp as it's not hooked up yet!
+        self.__ui.name_preview_label.setVisible(False)
+        
+        self.update_publishes()
+        
         init_proc(self)
         
     @property
@@ -43,6 +50,28 @@ class NewProjectForm(QtGui.QWidget):
         """
         """
         return self.__ui.name_edit.text()
+    
+    def update_publishes(self, sg_publish_data=None):
+        """
+        """
+        self.__ui.publish_list.clear()
+        if not sg_publish_data:
+            self.__ui.publish_list.set_message("<i>You must add at least one publish before "
+                                               "you can create the new project...</i>")
+            self.__ui.create_btn.setEnabled(False)
+        else:
+            self.__ui.publish_list.load(sg_publish_data)
+            self.__ui.create_btn.setEnabled(True)
+
+    def closeEvent(self, event):
+        """
+        Called when the widget is closed.
+        """
+        # make sure the publish list BrowserWidget is 
+        # cleaned up properly
+        self.__ui.publish_list.destroy()
+        
+        return QtGui.QWidget.closeEvent(self, event)
     
     def _on_create_clicked(self):
         """
@@ -53,8 +82,5 @@ class NewProjectForm(QtGui.QWidget):
         """
         """
         self.browse_publishes.emit(self)
-        
-    def add_publishes(self, publishes):
-        print "Adding publishes:"
-        print publishes
+
     

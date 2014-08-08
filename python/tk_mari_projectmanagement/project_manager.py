@@ -30,6 +30,7 @@ class ProjectManager(object):
         Construction
         """
         self._app = app
+        self.__new_project_publishes = []
         
     def create_new_project(self, name, sg_publish_data):
         """
@@ -74,13 +75,8 @@ class ProjectManager(object):
                 self._app.log_warning("Publish '%s' couldn't be found on disk, skipping!" % path)
             publishes_to_load.append(PublishedGeomDetails(path, sg_publish))
         
-        using_placeholder = False
         if not publishes_to_load:
-            #raise TankError("Must select at least one valid geometry publish in order to create a new project!")
-            # use placeholder geom instead:
-            placeholder_alembic = os.path.join(os.path.dirname(__file__), "..", "..", "resources", "placeholder.abc")
-            publishes_to_load.append(PublishedGeomDetails(placeholder_alembic, None))
-            using_placeholder = True
+            raise TankError("Must select at least one valid geometry publish in order to create a new project!")
         
         # close existing project if it's open:
         if mari.projects.current():
@@ -116,9 +112,6 @@ class ProjectManager(object):
         # add metadata to the project so that we can track the context:
         self.set_project_metadata(new_project, self._app.context)        
         
-        if using_placeholder:
-            return new_project
-        
         # update the metadata, name and version on the loaded geometry:
         for geo in mari.geo.list():
             self.__init_published_geo(geo, publishes_to_load[0].path, publishes_to_load[0].sg_publish)
@@ -138,8 +131,9 @@ class ProjectManager(object):
     def show_new_project_dialog(self):
         """
         """
+        self.__new_project_publishes = []
         res, new_project_form = self._app.engine.show_modal("Start New Project", self._app, NewProjectForm, 
-                                                            self._init_new_project_form)
+                                                            self._app, self._init_new_project_form)
         
     def _init_new_project_form(self, new_project_form):
         """
@@ -158,27 +152,23 @@ class ProjectManager(object):
         # browse for publishes:
         selected_publishes = loader_app.open_publish(title="Select Published Geoemtry", action="Select")
         
+        current_ids = set([p["id"] for p in self.__new_project_publishes])
+        
+        for sg_publish in selected_publishes:
+            publish_id = sg_publish.get("id")
+            if publish_id != None and publish_id not in current_ids:
+                current_ids.add(publish_id)
+                self.__new_project_publishes.append(sg_publish)
+        
         # update new project form with selected geometry:
-        new_project_form.add_publishes(selected_publishes)
+        new_project_form.update_publishes(self.__new_project_publishes)
         
     def _on_create_new_project(self, new_project_form):
         """
         """
         try:
             name = new_project_form.project_name
-            sg_publish_data = []
-            
-            # (AD) - TEMP!!
-            #if not sg_publish_data:
-            #    sg_publish_data.append({'version_number': 16,
-            #                            'task': {'type': 'Task', 'id': 230, 'name': 'Animation'},
-            #                            'entity': {'type': 'Shot', 'id': 914, 'name': '123'},
-            #                            'project': {'type': 'Project', 'id': 67, 'name': 'Another Demo Project'},
-            #                            'id': 1814, 
-            #                            'path': {'local_path': '/tank_testbed/another_demo_project/sequences/Sequence-01/123/Anm/publish/caches/scene.v016.abc'}, 
-            #                            'name': 'scene'})
-            
-            if self.create_new_project(name, sg_publish_data):
+            if self.create_new_project(name, self.__new_project_publishes):
                 new_project_form.close()
         except TankError, e:
             QtGui.QMessageBox.information(new_project_form, "Failed to create new project!", "%s" % e)
