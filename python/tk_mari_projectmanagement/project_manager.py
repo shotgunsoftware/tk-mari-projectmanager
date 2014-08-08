@@ -146,6 +146,20 @@ class ProjectManager(object):
         """
         # connect to signals:
         new_project_form.create_project.connect(self._on_create_new_project)
+        new_project_form.browse_publishes.connect(self._on_browse_for_publishes)
+        
+    def _on_browse_for_publishes(self, new_project_form):
+        """
+        """
+        loader_app = self._app.engine.apps.get("tk-multi-loader2")
+        if not loader_app:
+            raise TankError("The tk-multi-loader2 app needs to be available to browse for publishes!")
+        
+        # browse for publishes:
+        selected_publishes = loader_app.open_publish(title="Select Published Geoemtry", action="Select")
+        
+        # update new project form with selected geometry:
+        new_project_form.add_publishes(selected_publishes)
         
     def _on_create_new_project(self, new_project_form):
         """

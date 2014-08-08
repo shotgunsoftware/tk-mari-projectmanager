@@ -21,6 +21,7 @@ class NewProjectForm(QtGui.QWidget):
     
     # define signals that this form exposes:
     create_project = QtCore.Signal(QtGui.QWidget)
+    browse_publishes = QtCore.Signal(QtGui.QWidget)
     
     def __init__(self, init_proc, parent=None):
         """
@@ -33,6 +34,7 @@ class NewProjectForm(QtGui.QWidget):
         self.__ui.setupUi(self)
         
         self.__ui.create_btn.clicked.connect(self._on_create_clicked)
+        self.__ui.add_publish_btn.clicked.connect(self._on_add_publish_clicked)
         
         init_proc(self)
         
@@ -47,4 +49,12 @@ class NewProjectForm(QtGui.QWidget):
         """
         self.create_project.emit(self)
         
+    def _on_add_publish_clicked(self):
+        """
+        """
+        self.browse_publishes.emit(self)
+        
+    def add_publishes(self, publishes):
+        print "Adding publishes:"
+        print publishes
     

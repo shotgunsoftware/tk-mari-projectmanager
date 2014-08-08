@@ -46,7 +46,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Create a new project for the current work area...</string>
+        <string>Please choose a name to be used for the new project</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -54,51 +54,17 @@
       </widget>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="name_edit">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>22</height>
-          </size>
-         </property>
-         <property name="echoMode">
-          <enum>QLineEdit::Normal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Preview</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="preview_label">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>[name preview]</string>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QLineEdit" name="name_edit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::Normal</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="preview_label_2">
@@ -109,10 +75,10 @@
         </size>
        </property>
        <property name="text">
-        <string>Choose the geometry to be loaded into the new project</string>
+        <string>Choose any geometry publishes you would like the new project to be initialized with.  You must select at least one publish.</string>
        </property>
        <property name="wordWrap">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -140,7 +106,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="geom_browse_btn">
+          <widget class="QPushButton" name="add_publish_btn">
            <property name="minimumSize">
             <size>
              <width>32</width>
@@ -148,7 +114,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Add Geometry...</string>
+            <string>Add Publish...</string>
            </property>
           </widget>
          </item>
@@ -236,8 +202,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>300</x>
-     <y>213</y>
+     <x>386</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel">
      <x>463</x>
