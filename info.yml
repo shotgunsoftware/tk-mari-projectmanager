@@ -36,7 +36,7 @@ configuration:
 requires_shotgun_fields:
 
 # More verbose description of this item
-display_name: "Mari Project Management"
+display_name: "Mari Project Manager"
 description: "Shotgun aware project management for Mari"
 
 # Required minimum versions for this item to run
