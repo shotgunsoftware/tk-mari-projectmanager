@@ -52,7 +52,7 @@ class ProjectManager(object):
         :raises:                    TankError if something went wrong at any stage!
         """
         # create the project name:
-        name_result = self._generate_new_project_name(self, name_part)
+        name_result = self._generate_new_project_name(name_part)
         project_name = name_result.get("project_name")
         if not project_name:
             raise TankError("Failed to determine the project name: %s" % name_result.get("message"))
