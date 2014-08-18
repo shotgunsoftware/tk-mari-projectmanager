@@ -185,7 +185,8 @@ class ProjectManager(object):
             raise TankError("The tk-multi-loader2 app needs to be available to browse for publishes!")
         
         # browse for publishes:
-        selected_publishes = loader_app.open_publish(title="Select Published Geometry", action="Select")
+        publish_types = self._app.get_setting("publish_types")
+        selected_publishes = loader_app.open_publish("Select Published Geometry", "Select", publish_types)
         
         # make sure we keep this list of publishes unique:
         current_ids = set([p["id"] for p in self.__new_project_publishes])

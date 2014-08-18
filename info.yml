@@ -30,7 +30,17 @@ configuration:
       type: str
       description:  The default name that gets used to populate the UI when starting a 
                     new project.
-      default_value: Shotgun                
+      default_value: Shotgun
+      
+    publish_types:
+      type: list
+      default_value: ["Alembic Cache"]
+      allows_empty: True
+      description: A list of publish types that can be opened as geometry into Mari.  They
+                   will be used to filter the Select Publish dialog when adding geometry
+                   publishes to be loaded into a new project.
+      values:
+        type: str
 
 # the Shotgun fields that this app needs in order to operate correctly
 requires_shotgun_fields:
