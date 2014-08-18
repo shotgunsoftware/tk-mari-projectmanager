@@ -63,6 +63,9 @@
        </item>
        <item>
         <widget class="Line" name="name_line">
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -149,6 +152,9 @@
        </item>
        <item>
         <widget class="Line" name="publishes_line">
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -206,6 +212,9 @@ background-color: rgb(255, 128, 0);
    </item>
    <item>
     <widget class="Line" name="break_line">
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
