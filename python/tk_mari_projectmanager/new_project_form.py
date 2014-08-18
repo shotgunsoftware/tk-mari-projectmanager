@@ -59,15 +59,15 @@ class NewProjectForm(QtGui.QWidget):
         self.__ui.publish_list.set_app(app)
         self.__ui.publish_list.remove_publishes.connect(self._on_remove_selected_publishes)
         
-        # fix line colours!
+        # Fix line colours to match 75% of the text colour.  If we don't do this they are
+        # extremely bright compared to all other widgets!  This also seems to be the only
+        # way to override the default style sheet?!
         clr = QtGui.QApplication.palette().text().color()
-        self.__ui.break_line.setStyleSheet("#break_line{color: rgb(%d,%d,%d);}" % (clr.red() * 0.75, clr.green() * 0.75, clr.blue() * 0.75))
-        self.__ui.break_line.setFrameShadow(QtGui.QFrame.Plain)
-        self.__ui.name_line.setStyleSheet("#name_line{color: rgb(%d,%d,%d);}" % (clr.red() * 0.75, clr.green() * 0.75, clr.blue() * 0.75))
-        self.__ui.name_line.setFrameShadow(QtGui.QFrame.Plain)
-        self.__ui.publishes_line.setStyleSheet("#publishes_line{color: rgb(%d,%d,%d);}" % (clr.red() * 0.75, clr.green() * 0.75, clr.blue() * 0.75))
-        self.__ui.publishes_line.setFrameShadow(QtGui.QFrame.Plain)
-                
+        clr_str = "rgb(%d,%d,%d)" % (clr.red() * 0.75, clr.green() * 0.75, clr.blue() * 0.75)
+        self.__ui.name_line.setStyleSheet("#name_line{color: %s;}" % clr_str)
+        self.__ui.publishes_line.setStyleSheet("#publishes_line{color: %s;}" % clr_str)
+        self.__ui.break_line.setStyleSheet("#break_line{color: %s;}" % clr_str)        
+             
         # initialise the UI:
         self.__ui.name_edit.setText(initial_name)
         self.update_publishes()
