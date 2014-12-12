@@ -132,7 +132,8 @@ class PublishListView(browser_widget.BrowserWidget):
             entity_name = sg_publish.get("entity", {}).get("name")
             task_name = sg_publish.get("task.Task.content")
             
-            list_item.set_thumbnail(thumbnail_path)
+            if thumbnail_path:
+                list_item.set_thumbnail(thumbnail_path)
             
             line_1 = "<b>%s v%03d</b>" % (name, version)
             line_2 = "%s %s, %s" % (entity_type, entity_name, task_name)
