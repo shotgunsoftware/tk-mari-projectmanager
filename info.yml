@@ -25,6 +25,13 @@ configuration:
         description: "Specify a hook that will return the additional arguments that will
                       be passed to the Mari project creation method.  See default hook
                       and Mari documentation for details of what these args should be."
+
+    post_project_creation_hook:
+        type: hook
+        parameters: [sg_publish_data]
+        default_value: "{self}/post_project_creation.py"
+        description: "Specify a hook that will run after the project was created in
+                     Mari."
                       
     default_project_name:
       type: str

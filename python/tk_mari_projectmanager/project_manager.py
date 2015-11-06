@@ -86,6 +86,21 @@ class ProjectManager(object):
                                                       channels_to_import = channels_to_import, 
                                                       project_meta_options = project_meta_options, 
                                                       objects_to_load = objects_to_load)
+
+        try:
+            hook_res = self._app.execute_hook_method("post_project_creation_hook", 
+                                                     "post_project_creation", 
+                                                     sg_publish_data = sg_publish_data)
+            if hook_res == None:
+                hook_res = {}
+            elif not isinstance(hook_res, dict):
+                raise TankError("post_project_creation_hook returned unexpected type!")
+        except TankError, e:
+            raise TankError("Failed to post project creation from hook: %s" % e)
+        except Exception, e:
+            self._app.log_exception("Failed to post project creation from hook!")
+            raise TankError("Failed to post project creation from hook: %s" % e)
+
         return new_project
         
     def show_new_project_dialog(self):
