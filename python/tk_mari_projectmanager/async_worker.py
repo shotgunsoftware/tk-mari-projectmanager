@@ -8,8 +8,10 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+import time
+
 import sgtk
-from sgtk.platform.qt import QtCore, QtGui 
+from sgtk.platform.qt import QtCore, QtGui
 
 class AsyncWorker(QtCore.QThread):
     """
@@ -40,9 +42,6 @@ class AsyncWorker(QtCore.QThread):
 
         self._worker_cb = worker_cb
 
-        self._mutex = QtCore.QMutex()
-        self._wait_condition = QtCore.QWaitCondition()
-
         self._data = None
         self._stop_work = False
 
@@ -52,12 +51,7 @@ class AsyncWorker(QtCore.QThread):
         
         :param data:    Data that will be passed to the background thread
         """
-        try:
-            self._mutex.lock()
-            self._data = data
-            self._wait_condition.wakeAll()
-        finally:
-            self._mutex.unlock()
+        self._data = data
         
     def stop(self, wait_for_completion=True):
         """
@@ -66,12 +60,7 @@ class AsyncWorker(QtCore.QThread):
         :param wait_for_completion: If true then this method will block until the thread
                                     has completed execution
         """
-        try:
-            self._mutex.lock()
-            self._stop_work = True
-            self._wait_condition.wakeAll()
-        finally:
-            self._mutex.unlock()
+        self._stop_work = True
             
         # wait for completion..
         if wait_for_completion:
@@ -81,26 +70,17 @@ class AsyncWorker(QtCore.QThread):
         """
         Internal function called when start() is called.  This runs on the
         background thread processing and data by calling the worker callback
-        """        
+        """
         while True:
+            if self._stop_work:
+                break
+
+            if self._data is None:
+                time.sleep(0.1)
+                continue
             
-            data = None
-            try:
-                self._mutex.lock()
-                if self._stop_work:
-                    break
-                
-                if self._data is None:
-                    # wait for version to be changed:
-                    self._wait_condition.wait(self._mutex)
-                
-                if self._stop_work:
-                    break
-                
-                data = self._data
-                self._data = None
-            finally:
-                self._mutex.unlock()
+            data = self._data
+            self._data = None
                 
             # do the work:
             try:
