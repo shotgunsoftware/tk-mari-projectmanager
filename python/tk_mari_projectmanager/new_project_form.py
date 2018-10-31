@@ -29,23 +29,18 @@ class NewProjectForm(QtGui.QWidget):
     # emitted when the user requests to remove publishes from the publish list
     remove_publishes = QtCore.Signal(QtGui.QWidget, list)
     
-    def __init__(self, app, init_proc, preview_updater, initial_name, parent=None):
+    def __init__(self, app, init_proc, initial_name, manager, parent=None):
         """
         Construction
         
-        :param app:             The current app
-        :param init_proc:       Called at the end of construction to allow the calling
-                                code to hook up any signals, etc.
-        :param preview_updater: A background worker that can be used to update the
-                                project name preview
-        :param initial_name:    The initial name to use in the name field
-        :param parent:          The parent QWidget
+        :param app: The current app
+        :param init_proc: Called at the end of construction to allow the calling
+            code to hook up any signals, etc.
+        :param initial_name: The initial name to use in the name field
+        :param manager: The active Mari project manager object.
+        :param parent: The parent QWidget
         """
         QtGui.QWidget.__init__(self, parent)
-
-        self.__preview_updater = preview_updater
-        if self.__preview_updater:
-            self.__preview_updater.work_done.connect(self._preview_info_updated)
         
         # set up the UI
         from .ui.new_project_form import Ui_NewProjectForm
@@ -58,6 +53,9 @@ class NewProjectForm(QtGui.QWidget):
         
         self.__ui.publish_list.set_app(app)
         self.__ui.publish_list.remove_publishes.connect(self._on_remove_selected_publishes)
+
+        self._app = app
+        self._manager = manager
         
         # Fix line colours to match 75% of the text colour.  If we don't do this they are
         # extremely bright compared to all other widgets!  This also seems to be the only
@@ -73,15 +71,14 @@ class NewProjectForm(QtGui.QWidget):
         self.update_publishes()
         init_proc(self)
         
-        # update the name preview:
-        if self.__preview_updater:
-            self.__preview_updater.do(self.project_name)
+        # Set the initial state of the project name preview.
+        self._on_name_edited(self.project_name)
         
     @property
     def project_name(self):
         """
         Access the entered project name
-        :returns:    The project name the user entered
+        :returns: The project name the user entered
         """
         return self.__ui.name_edit.text()
     
@@ -89,8 +86,8 @@ class NewProjectForm(QtGui.QWidget):
         """
         Update the list of publishes
         
-        :param sg_publish_data: The list of publishes to present.  This is a list of 
-                                Shotgun entity dictionaries.
+        :param list sg_publish_data: The list of publishes to present. This is a list of 
+            Shotgun entity dictionaries.
         """
         # clear the existing publishes from the list:
         self.__ui.publish_list.clear()
@@ -109,15 +106,11 @@ class NewProjectForm(QtGui.QWidget):
         Called when the widget is closed so that any cleanup can be 
         done. Overrides QWidget.clostEvent.
         
-        :param event:    The close event.
+        :param event: The close event.
         """
         # make sure the publish list BrowserWidget is 
         # cleaned up properly
         self.__ui.publish_list.destroy()
-        
-        # disconnect the preview updater:
-        if self.__preview_updater:
-            self.__preview_updater.work_done.disconnect(self._preview_info_updated)
         
         # return result from base implementation
         return QtGui.QWidget.closeEvent(self, event)
@@ -137,22 +130,19 @@ class NewProjectForm(QtGui.QWidget):
     def _on_name_edited(self, txt):
         """
         Called when the user edits the name
-        :param txt:    The current text entered into the edit control
+        :param str txt: The current text entered into the edit control
         """
-        # if we have a preview updater then update the name
-        # preview:
-        if self.__preview_updater:
-            self.__preview_updater.do(self.project_name)
+        self._preview_info_updated(self._manager._generate_new_project_name(txt))
 
     def _on_remove_selected_publishes(self, publish_ids):
         """
         Called when the user requests to remove some publishes from the list
         
-        :param publish_ids:    The list of publish ids to be removed
+        :param list publish_ids: The list of publish ids to be removed
         """
-        self.remove_publishes.emit(self, publish_ids)
+        self.remove_publishes.emit(self, publish_ids) 
 
-    def _preview_info_updated(self, name, result):
+    def _preview_info_updated(self, result):
         """
         Called when the worker thread has finished generating the
         new project name
