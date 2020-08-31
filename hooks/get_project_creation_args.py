@@ -66,6 +66,14 @@ class GetArgsHook(HookBaseClass):
         project_meta_options[
             "CreateSelectionSets"
         ] = mari.geo.SELECTION_GROUPS_CREATE_FROM_FACE_GROUPS
+        # Mari 4.6 started giving a deprecation warning that this value would change it's
+        # default in future versions, so we're locking it to the current
+        # one.
+        # Up to 4.6, the default value is documented at
+        # file:///Applications/Mari4.6v4/Mari4.6v4.app/Contents/Resources/pydoc/mari.ProjectManager-class.html#create
+        project_meta_options[
+            "MergeSelectionGroupWithSameNameType"
+        ] = mari.geo.MERGESELECTIONGROUP_DO_NOT_MERGE
         # merge nodes within file but not all geometry into a single mesh
         project_meta_options["MergeType"] = mari.geo.MERGETYPE_JUST_MERGE_NODES
 
