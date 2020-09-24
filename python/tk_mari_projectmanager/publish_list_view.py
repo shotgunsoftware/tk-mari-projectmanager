@@ -91,7 +91,7 @@ class PublishListView(browser_widget.BrowserWidget):
 
             # build a list of publish ids that we need to fetch details for:
             ids_to_fetch = []
-            for id, publish in publishes.iteritems():
+            for id, publish in publishes.items():
                 if id in self.__publish_images:
                     if self.__publish_images[id]:
                         publish["image"] = self.__publish_images[id]

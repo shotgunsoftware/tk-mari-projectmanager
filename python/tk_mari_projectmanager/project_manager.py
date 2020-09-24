@@ -18,7 +18,7 @@ from sgtk.platform.qt import QtGui
 
 import mari
 
-from new_project_form import NewProjectForm
+from .new_project_form import NewProjectForm
 
 
 class ProjectManager(object):
