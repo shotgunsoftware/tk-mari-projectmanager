@@ -18,7 +18,9 @@ from datetime import datetime, timedelta
 import sgtk
 from sgtk.platform.qt import QtCore, QtGui
 
-browser_widget = sgtk.platform.import_framework("tk-framework-widget", "browser_widget")
+browser_widget = sgtk.platform.import_framework(
+    "tk-framework-qtwidgets", "browser_widget"
+)
 
 
 class PublishListView(browser_widget.BrowserWidget):
